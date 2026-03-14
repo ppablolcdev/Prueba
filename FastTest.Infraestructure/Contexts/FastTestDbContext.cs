@@ -21,6 +21,6 @@ namespace FastTest.Infraestructure.Contexts
             base.OnModelCreating(modelBuilder);
         }
 
-        public DbSet<Tarea> Tareas{ get; set; }
+        public DbSet<TaskItem> TaskItems{ get; set; }
     }
 }

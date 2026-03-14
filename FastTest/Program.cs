@@ -13,16 +13,10 @@ builder.Services.AddDbContext<FastTestDbContext>(options =>
 
 var app = builder.Build();
 
-await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
-{
-    FastTestDbContext dbContext = scope.ServiceProvider.GetRequiredService<FastTestDbContext>();
-    IEnumerable<string> pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+await using var scope = app.Services.CreateAsyncScope();
+var db = scope.ServiceProvider.GetRequiredService<FastTestDbContext>();
 
-    if (pendingMigrations.Any())
-    {
-        await dbContext.Database.MigrateAsync();
-    }
-}
+await db.Database.MigrateAsync();
 
 app.UseFastEndpoints();
 app.UseOpenApi();

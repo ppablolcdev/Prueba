@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace FastTest.Core.FastTest.Domain
 {
-    public enum Estado
+    public enum TaskStatus
     {
-        Pendiente,
-        EnCurso,
-        Completada
+        Pending,
+        InProgress,
+        Completed
     }
 }
