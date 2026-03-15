@@ -1,11 +1,10 @@
-﻿using FastTest.Endpoints.TaskItems;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FastTest.Application.Querys
+namespace FastTest.Application.Querys.GetTask
 {
     public class PagedTaskResponse
     {

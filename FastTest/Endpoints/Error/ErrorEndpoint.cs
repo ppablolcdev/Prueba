@@ -8,6 +8,8 @@ namespace FastTest.Endpoints.Error
         {
             Get("/error");
             AllowAnonymous();
+            //quitar del swagger
+            Description(x => x.ExcludeFromDescription());
         }
 
         public override async Task HandleAsync(CancellationToken ct)
