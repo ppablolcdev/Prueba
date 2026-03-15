@@ -3,6 +3,7 @@ using FastEndpoints.Swagger;
 using FastTest.Application.Querys;
 using FastTest.Infraestructure.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -40,7 +41,22 @@ builder.Services
         };
     });
 
+//Agregar Rate limite para evitar ataques ddos 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("api", config =>
+    {
+        config.PermitLimit = 100;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueLimit = 10;
+    });
+});
+
 builder.Services.AddAuthorization();
+
+//Agregar logs
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 var app = builder.Build();
 
@@ -63,6 +79,12 @@ app.UseSwaggerGen();
 //seguridad
 app.UseAuthentication();
 app.UseAuthorization();
+//RateLimite
+app.UseRateLimiter();
+//errores genericos
+app.UseExceptionHandler("/error");
+
+
 
 app.UseFastEndpoints();
 

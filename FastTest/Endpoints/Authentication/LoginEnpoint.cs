@@ -31,7 +31,7 @@ namespace FastTest.Endpoints.Authentication
                         new Claim(ClaimTypes.Role, "User")
                 }),
 
-                Expires = DateTime.UtcNow.AddHours(1), // duración del token
+                Expires = DateTime.UtcNow.AddSeconds(20),
 
                 SigningCredentials =
                       new SigningCredentials(
