@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using FastTest.Application.Querys;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 
@@ -21,7 +22,7 @@ namespace FastTest.Endpoints.TaskItems
         public override void Configure()
         {
             Get("/tasks");
-            AllowAnonymous();
+            AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
         }
 
         public override async Task HandleAsync(CancellationToken ct)

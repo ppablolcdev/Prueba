@@ -2,8 +2,11 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using FastTest.Application.Querys;
 using FastTest.Infraestructure.Contexts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +21,26 @@ builder.Services.AddDbContext<FastTestDbContext>(options =>
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetTasksQuery).Assembly));
 
+//Seguridad Jwt
+var jwtKey = builder.Configuration["Jwt:Key"];
 
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -36,8 +58,12 @@ await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
 
 
 app.UseOpenApi();
-app.UseFastEndpoints();
-app.UseSwaggerGen();
 
+app.UseSwaggerGen();
+//seguridad
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseFastEndpoints();
 
 app.Run();
