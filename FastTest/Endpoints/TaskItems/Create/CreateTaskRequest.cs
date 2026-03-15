@@ -1,4 +1,4 @@
-﻿namespace FastTest.Endpoints.TaskItems
+﻿namespace FastTest.Endpoints.TaskItems.Create
 {
     public class CreateTaskRequest
     {

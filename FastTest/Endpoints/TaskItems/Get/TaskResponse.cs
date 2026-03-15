@@ -1,6 +1,5 @@
-﻿
-//using TaskStatusEnum = FastTest.Core.FastTest.Domain.TaskStatus;
-namespace FastTest.Endpoints.TaskItems
+﻿//using TaskStatusEnum = FastTest.Core.FastTest.Domain.TaskStatus;
+namespace FastTest.Endpoints.TaskItems.Get
 {
     public class TaskResponse
     {

@@ -1,6 +1,6 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using FastTest.Application.Querys;
+using FastTest.Application.Querys.GetTask;
 using FastTest.Infraestructure.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
@@ -14,7 +14,32 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFastEndpoints();
-builder.Services.AddSwaggerDocument();
+
+//Swagger
+builder.Services.SwaggerDocument(o =>
+{
+    //evitar que se dupliquen las cajas para agregar el token
+    o.EnableJWTBearerAuth = false;
+
+    o.DocumentSettings = s =>
+    {
+        s.Title = "FastTest";
+        s.Version = "v1";
+        s.Description = "API construida con CleanArchitecture usando FastEndpoints y CQRS";
+
+        s.AddAuth("Bearer", new()
+        {
+            Type = NSwag.OpenApiSecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = NSwag.OpenApiSecurityApiKeyLocation.Header,
+            Description = "pega el token aqui"
+        });
+
+    };
+
+
+});
 
 //Invocar string de conexion
 builder.Services.AddDbContext<FastTestDbContext>(options =>
@@ -26,12 +51,6 @@ builder.Services.AddMediatR(cfg =>
 
 //Seguridad Jwt
 var jwtKey = builder.Configuration["Jwt:Key"];
-
-//Enum a texto para PUT 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -48,6 +67,14 @@ builder.Services
                 Encoding.UTF8.GetBytes(jwtKey))
         };
     });
+
+//Enum a texto para PUT 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+
 
 //Agregar Rate limite para evitar ataques ddos 
 builder.Services.AddRateLimiter(options =>
@@ -95,5 +122,7 @@ app.UseExceptionHandler("/error");
 
 
 app.UseFastEndpoints();
+
+
 
 app.Run();

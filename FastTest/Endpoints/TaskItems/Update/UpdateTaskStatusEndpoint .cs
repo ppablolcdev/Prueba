@@ -2,7 +2,7 @@
 using FastTest.Application.Commands;
 using MediatR;
 
-namespace FastTest.Endpoints.TaskItems
+namespace FastTest.Endpoints.TaskItems.Update
 {
     public class UpdateTaskStatusEndpoint : Endpoint<UpdateTaskStatusRequest>
     {
@@ -32,7 +32,8 @@ namespace FastTest.Endpoints.TaskItems
                 return;
             }
 
-            await SendOkAsync(ct);
+            //responder con 204
+            await SendNoContentAsync(ct);
 
         }
     }

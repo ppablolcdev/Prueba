@@ -1,20 +1,20 @@
 ﻿using FastEndpoints;
 using FastTest.Application.Commands;
+using FastTest.Endpoints.TaskItems.Get;
 using MediatR;
 
-namespace FastTest.Endpoints.TaskItems
+namespace FastTest.Endpoints.TaskItems.Create
 {
     public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, object>
     {
 
         private readonly IMediator mediator;
-        //para logs
-        private readonly ILogger<ListTasksEndpoint> _logger;
+       
 
-        public CreateTaskEndpoint(IMediator mediator, ILogger<ListTasksEndpoint> logger)
+        public CreateTaskEndpoint(IMediator mediator, ILogger<CreateTaskEndpoint> logger)
         {
             this.mediator = mediator;
-            _logger=logger;
+
         }
 
         public override void Configure()
@@ -30,12 +30,10 @@ namespace FastTest.Endpoints.TaskItems
             if (req.Title?.Length > 200)
                 ThrowError("El Titulo es demasiado largo");
 
-            //Loggear
-            _logger.LogInformation("CreateTasks invocado ; valores Title: {Title} Description: {Description}", req.Title, req.Description);
 
             var id = await mediator.Send(new CreateTaskCommand(req.Title, req.Description), ct);
 
-            await SendAsync(new { id = id }, 201, ct);
+            await SendAsync(new { id }, 201, ct);
 
         }
     }
