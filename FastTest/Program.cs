@@ -96,15 +96,19 @@ builder.Logging.AddConsole();
 var app = builder.Build();
 
 //Crear BD al iniciar
-await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    FastTestDbContext dbContext = scope.ServiceProvider.GetRequiredService<FastTestDbContext>();
-    IEnumerable<string> pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
-
-    if (pendingMigrations.Any())
+    
+    await using (AsyncServiceScope scope = app.Services.CreateAsyncScope())
     {
-        await dbContext.Database.MigrateAsync();
-    }
+        FastTestDbContext dbContext = scope.ServiceProvider.GetRequiredService<FastTestDbContext>();
+        IEnumerable<string> pendingMigrations = await dbContext.Database.GetPendingMigrationsAsync();
+
+        if (pendingMigrations.Any())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+    } 
 }
 
 
@@ -126,3 +130,5 @@ app.UseFastEndpoints();
 
 
 app.Run();
+
+public partial class Program;

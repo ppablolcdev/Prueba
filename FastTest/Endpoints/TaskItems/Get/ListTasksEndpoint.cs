@@ -23,7 +23,7 @@ namespace FastTest.Endpoints.TaskItems.Get
         public override void Configure()
         {
             Get("/tasks");
-            AuthSchemes(JwtBearerDefaults.AuthenticationScheme);
+            Roles("User");
             Options(x => x.RequireRateLimiting("api"));
 
         
